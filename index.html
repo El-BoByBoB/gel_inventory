@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Gel Studio">
-  <meta name="description" content="Inventario de geles de uñas organizado por marca, color y tipo. Funciona sin conexión.">
+  <meta name="description" content="Inventario de geles de uñas sincronizado entre celular y tablet.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="icons/icon-192.png">
@@ -15,13 +15,29 @@
   <title>Gel Studio | Mi inventario</title>
 </head>
 <body>
-  <div class="app-shell">
+  <section class="auth-screen" id="authGate" aria-labelledby="loginTitle">
+    <div class="auth-card">
+      <div class="auth-brand">✦ gel<span>studio</span></div>
+      <h1 id="loginTitle">Inventario compartido</h1>
+      <p id="authDescription">Conecta tu inventario para verlo en el celular y la tablet.</p>
+      <div id="authLoading" class="auth-message">Preparando acceso seguro…</div>
+      <form id="loginForm" hidden>
+        <label class="auth-label">Correo electrónico<input id="loginEmail" type="email" autocomplete="username" required placeholder="correo@ejemplo.com"></label>
+        <label class="auth-label">Contraseña<input id="loginPassword" type="password" autocomplete="current-password" required minlength="6" placeholder="Tu contraseña"></label>
+        <p id="loginError" class="form-error" role="alert" hidden></p>
+        <button class="primary-button auth-submit" id="loginBtn" type="submit">Entrar a mi inventario</button>
+      </form>
+      <p class="auth-hint">Utiliza la misma cuenta en ambos dispositivos. Los datos se guardan en Firebase.</p>
+    </div>
+  </section>
+  <div class="app-shell" id="mainApp" hidden>
     <header class="topbar">
       <div class="brand-lockup">
         <span class="brand-icon" aria-hidden="true">✦</span>
         <div><div class="brand-title">gel<span>studio</span></div><div class="brand-subtitle">MI COLECCIÓN</div></div>
       </div>
       <div class="header-actions">
+        <div class="account-controls"><span id="syncStatus">Conectando…</span><button id="logoutBtn" type="button" class="text-button">Salir</button></div>
         <button class="icon-button" id="backupBtn" type="button" aria-label="Respaldos y datos" title="Respaldos y datos">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>
         </button>
@@ -56,7 +72,7 @@
         <div id="results" class="results" aria-live="polite"></div>
       </section>
     </main>
-    <footer class="footer">GEL STUDIO <span>✦</span> Tu inventario se guarda en este dispositivo. Haz respaldos regularmente.</footer>
+    <footer class="footer">GEL STUDIO <span>✦</span> Inventario compartido en la nube. Exporta respaldos de vez en cuando.</footer>
   </div>
 
   <button class="floating-add" id="floatingAddBtn" type="button" aria-label="Añadir un gel">+</button>
@@ -82,13 +98,16 @@
 
   <dialog class="data-modal" id="dataDialog" aria-labelledby="dataTitle">
     <div class="dialog-content"><div class="dialog-header"><div><span class="eyebrow soft">TU INFORMACIÓN</span><h2 id="dataTitle">Respaldos y datos</h2></div><button class="close-button" type="button" data-close="dataDialog" aria-label="Cerrar">×</button></div>
-      <p class="dialog-info">Tus geles están guardados en este dispositivo, no en la nube. Exporta un respaldo para no perderlos si cambias de teléfono o borras los datos de la app.</p>
+      <p class="dialog-info">El inventario está sincronizado en Firebase. Los cambios en un dispositivo aparecen en el otro. Exporta un respaldo ocasionalmente.</p>
       <div class="data-actions"><button class="data-action" type="button" id="exportJsonBtn"><span class="data-action-icon">↧</span><span><strong>Exportar respaldo JSON</strong><small>Para recuperar tu inventario más adelante</small></span></button><button class="data-action" type="button" id="exportCsvBtn"><span class="data-action-icon">▤</span><span><strong>Exportar tabla CSV</strong><small>Para abrir en Excel o Google Sheets</small></span></button><button class="data-action" type="button" id="importJsonBtn"><span class="data-action-icon">↥</span><span><strong>Importar respaldo JSON</strong><small>Reemplaza los registros actuales</small></span></button></div>
+      <button class="data-action" id="importOldLocalBtn" type="button" hidden><span class="data-action-icon">↥</span><span><strong>Importar geles de la versión anterior</strong><small>Este dispositivo tiene <span id="localCount">0</span> registros locales. Reemplaza el inventario compartido.</small></span></button>
       <input id="importFile" type="file" accept=".json,application/json" hidden>
       <div class="data-danger"><p>¿Quieres empezar de cero?</p><button class="danger-button" type="button" id="deleteAllBtn">Borrar todo el inventario</button></div>
     </div>
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="firebase-config.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="cloud.js" type="module"></script>
 </body>
 </html>

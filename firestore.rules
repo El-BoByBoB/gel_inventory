@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /inventories/{userId}/gels/{gelId} {
+      // Este es el UID autorizado de Authentication > Users.
+      // Únicamente esa cuenta podrá leer y escribir. No hay acceso público.
+      allow read, write: if request.auth != null
+        && request.auth.uid == userId
+        && request.auth.uid == 'AJdPk0tjUZfQHRslx2OAjEOAxRC3';
+    }
+  }
+}

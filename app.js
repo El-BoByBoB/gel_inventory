@@ -26,7 +26,7 @@ function sanitizeItem(item) {
   const price = Number(item.price);
   const quantity = Number(item.quantity);
   return {
-    id: typeof item.id === 'string' && item.id.length < 100 ? item.id : makeId(),
+    id: typeof item.id === 'string' && /^[A-Za-z0-9_-]{1,99}$/.test(item.id) ? item.id : makeId(),
     brand: String(item.brand).trim().slice(0,65),
     code: String(item.code).trim().slice(0,65),
     color: String(item.color).trim().slice(0,75),
@@ -42,17 +42,6 @@ function sanitizeItem(item) {
 function makeId() {
   return typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
     ? crypto.randomUUID() : `gel-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-}
-
-function saveStore() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
-    return true;
-  } catch (error) {
-    console.error('Error guardando inventario', error);
-    alert('No se pudo guardar. Comprueba el almacenamiento del dispositivo y exporta un respaldo.');
-    return false;
-  }
 }
 
 function showToast(message) {
@@ -192,7 +181,7 @@ function openEditor(item = null, duplicate = false) {
   $('#gelDialog').showModal();
 }
 
-function handleSave(event) {
+async function handleSave(event) {
   event.preventDefault();
   const error = $('#formError');
   const previousId = $('#editId').value;
@@ -215,23 +204,30 @@ function handleSave(event) {
   if (inventory.some(other => other.id !== item.id && norm(other.brand) === norm(item.brand) && norm(other.code) === norm(item.code))) {
     error.textContent = 'Ya tienes un gel con ese código y esa marca. Edita ese registro o usa otro código.'; error.hidden = false; return;
   }
-  const before = [...inventory];
-  if (original) inventory = inventory.map(existing => existing.id === item.id ? item : existing);
-  else inventory.push(item);
-  if (!saveStore()) { inventory = before; return; }
-  $('#gelDialog').close();
-  refresh();
-  showToast(original ? 'Gel actualizado' : 'Gel añadido a tu inventario');
+  const button = $('#saveBtn');
+  button.disabled = true;
+  button.textContent = 'Guardando…';
+  try {
+    await window.gelStudioCloud.saveItem(item);
+    $('#gelDialog').close();
+    showToast(original ? 'Gel actualizado' : 'Gel añadido a tu inventario');
+  } catch (err) {
+    error.textContent = `No se pudo guardar: ${friendlyError(err)}`;
+    error.hidden = false;
+  } finally {
+    button.disabled = false;
+    button.textContent = original ? 'Guardar cambios' : 'Guardar gel';
+  }
 }
 
-function deleteItem(id) {
+async function deleteItem(id) {
   const item = inventory.find(entry => entry.id === id);
   if (!item || !confirm(`¿Eliminar ${item.brand} ${item.code} (${item.color}) del inventario?`)) return;
-  const before = inventory;
-  inventory = inventory.filter(entry => entry.id !== id);
-  if (!saveStore()) { inventory = before; return; }
-  activeMenu = null;
-  refresh(); showToast('Gel eliminado');
+  try {
+    await window.gelStudioCloud.removeItem(id);
+    activeMenu = null;
+    showToast('Gel eliminado');
+  } catch (error) { alert(`No se pudo eliminar: ${friendlyError(error)}`); }
 }
 
 function clearFilters() {
@@ -293,32 +289,68 @@ async function importJson(event) {
       seen.add(key);
     });
     if (!confirm(`Este respaldo tiene ${entries.length} geles. Reemplazará tus ${inventory.length} registros actuales. ¿Continuar?`)) return;
-    const previous = inventory;
-    inventory = entries.map(item => ({...item,id:makeId()}));
-    if (!saveStore()) { inventory = previous; return; }
-    clearFilters(); refresh();
+    await window.gelStudioCloud.replaceAll(entries.map(item => ({...item,id:makeId()})));
+    clearFilters();
     $('#dataDialog').close();
-    showToast(`${entries.length} geles importados correctamente`);
+    showToast(`${entries.length} geles importados en la nube`);
   } catch (error) {
     alert(`No se pudo importar el respaldo: ${error.message}`);
   }
 }
 
-function deleteAll() {
+async function deleteAll() {
   if (!inventory.length) { showToast('El inventario ya está vacío'); return; }
-  if (!confirm('¿Borrar TODOS los geles de este dispositivo? Esta acción no se puede deshacer. Exporta un respaldo primero.')) return;
+  if (!confirm('¿Borrar TODOS los geles del inventario compartido en la nube? Se borrarán para todos los dispositivos. Esta acción no se puede deshacer. Exporta un respaldo primero.')) return;
   const second = prompt('Para confirmar, escribe BORRAR en mayúsculas:');
   if (second !== 'BORRAR') { showToast('Operación cancelada'); return; }
-  const previous = inventory;
-  inventory = [];
-  if (!saveStore()) { inventory = previous; return; }
-  activeMenu = null;
-  clearFilters(); refresh();
-  $('#dataDialog').close(); showToast('Inventario borrado');
+  try {
+    await window.gelStudioCloud.replaceAll([]);
+    activeMenu = null;
+    clearFilters();
+    $('#dataDialog').close();
+    showToast('Inventario borrado de la nube');
+  } catch (error) { alert(`No se pudo borrar: ${friendlyError(error)}`); }
 }
 
+function friendlyError(error) {
+  if (error?.code === 'permission-denied') return 'Acceso denegado. Comprueba las reglas de Firestore y el UID autorizado.';
+  if (error?.code === 'unavailable' || !navigator.onLine) return 'Comprueba la conexión a internet e inténtalo otra vez.';
+  return error?.message || 'Error desconocido.';
+}
+
+async function importOldLocal() {
+  const old = readStore();
+  if (!old.length) { showToast('Este dispositivo no tiene inventario antiguo'); return; }
+  if (!confirm(`Encontré ${old.length} geles del inventario anterior en este dispositivo. Se REEMPLAZARÁ todo el inventario compartido actual (${inventory.length} geles). ¿Importarlos?`)) return;
+  try {
+    await window.gelStudioCloud.replaceAll(old);
+    $('#dataDialog').close();
+    showToast(`${old.length} geles anteriores subidos a la nube`);
+  } catch (error) { alert(`No se pudo importar: ${friendlyError(error)}`); }
+}
+
+window.gelStudioApp = {
+  setInventory(items) {
+    inventory = items.map(sanitizeItem).filter(Boolean);
+    activeMenu = null;
+    refresh();
+  },
+  setSignedOut() {
+    inventory = [];
+    activeMenu = null;
+    refresh();
+  },
+  showOldInventoryOption() {
+    const old = readStore();
+    const button = $('#importOldLocalBtn');
+    button.hidden = !old.length;
+    $('#localCount').textContent = String(old.length);
+  },
+  showToast
+};
+
 function init() {
-  inventory = readStore();
+  inventory = [];
   refresh();
   $('#addBtn').addEventListener('click',() => openEditor());
   $('#floatingAddBtn').addEventListener('click',() => openEditor());
@@ -347,6 +379,8 @@ function init() {
   $('#exportJsonBtn').addEventListener('click',exportJson);
   $('#exportCsvBtn').addEventListener('click',exportCsv);
   $('#importJsonBtn').addEventListener('click',() => $('#importFile').click());
+  $('#importOldLocalBtn').addEventListener('click',importOldLocal);
+  window.gelStudioApp.showOldInventoryOption();
   $('#importFile').addEventListener('change',importJson);
   $('#deleteAllBtn').addEventListener('click',deleteAll);
   ['#gelDialog','#dataDialog'].forEach(selector => {
