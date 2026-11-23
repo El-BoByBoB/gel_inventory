@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f9f5f5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Gel Studio">
+  <meta name="description" content="Inventario de geles de uñas organizado por marca, color y tipo. Funciona sin conexión.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Gel Studio | Mi inventario</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <span class="brand-icon" aria-hidden="true">✦</span>
+        <div><div class="brand-title">gel<span>studio</span></div><div class="brand-subtitle">MI COLECCIÓN</div></div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-button" id="backupBtn" type="button" aria-label="Respaldos y datos" title="Respaldos y datos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>
+        </button>
+        <button class="primary-button top-add" id="addBtn" type="button"><span class="plus">+</span> Añadir gel</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-copy"><span class="eyebrow">INVENTARIO PERSONAL</span><h1 id="heroTitle">Todos tus geles,<br><em>en un solo lugar.</em></h1><p>Encuentra cada tono, marca y acabado sin tener que revisar botella por botella.</p></div>
+        <div class="hero-decoration" aria-hidden="true"><div class="bottle bottle-back"><div class="cap"></div><div class="glass"></div></div><div class="bottle bottle-front"><div class="cap"></div><div class="glass"><span>GEL</span></div></div><div class="hero-spark">✧</div></div>
+      </section>
+
+      <section class="metrics" aria-label="Resumen del inventario">
+        <div class="metric"><div class="metric-label">Geles diferentes</div><div class="metric-number" id="totalProducts">0</div><span class="metric-note">registros</span></div>
+        <div class="metric"><div class="metric-label">Unidades totales</div><div class="metric-number" id="totalUnits">0</div><span class="metric-note">botellas y envases</span></div>
+        <div class="metric"><div class="metric-label">Valor del inventario</div><div class="metric-number money" id="totalValue">$0.00</div><span class="metric-note">según precios ingresados</span></div>
+      </section>
+
+      <section class="inventory" aria-labelledby="inventoryTitle">
+        <div class="section-heading"><div><span class="eyebrow soft">TU COLECCIÓN</span><h2 id="inventoryTitle">Inventario <span class="count-pill" id="visibleCount">0</span></h2></div><button class="text-button" id="clearFiltersBtn" type="button">Limpiar filtros</button></div>
+        <div class="toolbar">
+          <label class="search-wrap" for="searchInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 5 5"/></svg><input id="searchInput" type="search" placeholder="Buscar marca, código, color..." autocomplete="off"></label>
+          <label class="sort-wrap"><span>Orden</span><select id="sortSelect"><option value="name">A–Z</option><option value="recent">Más recientes</option><option value="priceHigh">Precio mayor</option><option value="priceLow">Precio menor</option><option value="quantity">Más unidades</option></select></label>
+        </div>
+        <div class="filters">
+          <label><span>Tipo de gel</span><select id="typeFilter"><option value="">Todos los tipos</option></select></label>
+          <label><span>Marca</span><select id="brandFilter"><option value="">Todas las marcas</option></select></label>
+          <label><span>Color</span><select id="colorFilter"><option value="">Todos los colores</option></select></label>
+          <label><span>Ver por categoría</span><select id="groupSelect"><option value="type">Tipo de gel</option><option value="brand">Marca</option><option value="color">Color</option><option value="none">Sin agrupar</option></select></label>
+        </div>
+        <div id="results" class="results" aria-live="polite"></div>
+      </section>
+    </main>
+    <footer class="footer">GEL STUDIO <span>✦</span> Tu inventario se guarda en este dispositivo. Haz respaldos regularmente.</footer>
+  </div>
+
+  <button class="floating-add" id="floatingAddBtn" type="button" aria-label="Añadir un gel">+</button>
+
+  <dialog class="editor-modal" id="gelDialog" aria-labelledby="dialogTitle">
+    <form id="gelForm" class="dialog-content">
+      <div class="dialog-header"><div><span class="eyebrow soft">TU INVENTARIO</span><h2 id="dialogTitle">Añadir gel</h2></div><button class="close-button" type="button" data-close="gelDialog" aria-label="Cerrar">×</button></div>
+      <input type="hidden" id="editId">
+      <div class="form-grid">
+        <label class="field"><span>Marca <b>*</b></span><input id="brandInput" name="brand" required maxlength="65" placeholder="Ej. DND" list="brandSuggestions" autocomplete="off"><datalist id="brandSuggestions"></datalist></label>
+        <label class="field"><span>Código del gel <b>*</b></span><input id="codeInput" name="code" required maxlength="65" placeholder="Ej. 045" autocomplete="off"></label>
+        <label class="field"><span>Nombre del color <b>*</b></span><input id="colorInput" name="color" required maxlength="75" placeholder="Ej. Rosa pastel" autocomplete="off"></label>
+        <label class="field"><span>Tipo de gel <b>*</b></span><input id="typeInput" name="type" required maxlength="65" list="typeSuggestions" placeholder="Ej. Gel polish" autocomplete="off"><datalist id="typeSuggestions"><option value="Gel polish"></option><option value="Builder gel"></option><option value="Base coat"></option><option value="Top coat"></option><option value="Rubber base"></option><option value="Cat eye"></option><option value="Jelly gel"></option><option value="Glitter gel"></option><option value="Polygel"></option><option value="Painting gel"></option><option value="Blooming gel"></option><option value="Otro"></option></datalist></label>
+        <label class="field"><span>Precio por unidad ($) <b>*</b></span><input id="priceInput" name="price" type="number" inputmode="decimal" min="0" max="999999" step="0.01" required placeholder="0.00"></label>
+        <label class="field"><span>Cantidad</span><input id="quantityInput" name="quantity" type="number" inputmode="numeric" min="0" max="999999" step="1" required value="1"></label>
+        <label class="field swatch-field"><span>Muestra del color</span><div class="swatch-input"><input id="swatchInput" name="swatch" type="color" value="#dca9b8"><span>Elegir tono aproximado</span></div></label>
+        <label class="field"><span>Notas (opcional)</span><input id="notesInput" name="notes" maxlength="250" placeholder="Ej. Acabado brillante"></label>
+      </div>
+      <div id="formError" class="form-error" role="alert" hidden></div>
+      <div class="dialog-actions"><button type="button" class="secondary-button" data-close="gelDialog">Cancelar</button><button class="primary-button" type="submit" id="saveBtn">Guardar gel</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="data-modal" id="dataDialog" aria-labelledby="dataTitle">
+    <div class="dialog-content"><div class="dialog-header"><div><span class="eyebrow soft">TU INFORMACIÓN</span><h2 id="dataTitle">Respaldos y datos</h2></div><button class="close-button" type="button" data-close="dataDialog" aria-label="Cerrar">×</button></div>
+      <p class="dialog-info">Tus geles están guardados en este dispositivo, no en la nube. Exporta un respaldo para no perderlos si cambias de teléfono o borras los datos de la app.</p>
+      <div class="data-actions"><button class="data-action" type="button" id="exportJsonBtn"><span class="data-action-icon">↧</span><span><strong>Exportar respaldo JSON</strong><small>Para recuperar tu inventario más adelante</small></span></button><button class="data-action" type="button" id="exportCsvBtn"><span class="data-action-icon">▤</span><span><strong>Exportar tabla CSV</strong><small>Para abrir en Excel o Google Sheets</small></span></button><button class="data-action" type="button" id="importJsonBtn"><span class="data-action-icon">↥</span><span><strong>Importar respaldo JSON</strong><small>Reemplaza los registros actuales</small></span></button></div>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+      <div class="data-danger"><p>¿Quieres empezar de cero?</p><button class="danger-button" type="button" id="deleteAllBtn">Borrar todo el inventario</button></div>
+    </div>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
