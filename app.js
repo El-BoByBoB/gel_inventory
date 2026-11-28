@@ -139,7 +139,7 @@ function render() {
   const target = $('#results');
   if (!items.length) {
     const nothingYet = inventory.length === 0;
-    target.innerHTML = `<div class="empty-state"><div class="empty-icon">✦</div><h3>${nothingYet ? 'Tu colección comienza aquí' : 'No hay resultados'}</h3><p>${nothingYet ? 'Añade tu primer gel y empieza a organizar tu colección por marca, color y tipo.' : 'Prueba con otro código, color, marca o elimina algunos filtros.'}</p>${nothingYet ? '<button class="primary-button" type="button" data-action="add">+ Añadir mi primer gel</button>' : '<button class="secondary-button" type="button" data-action="reset">Limpiar filtros</button>'}</div>`;
+    target.innerHTML = `<div class="empty-state"><div class="empty-icon">✦</div><h3>${nothingYet ? 'Tu colección comienza aquí' : 'No hay resultados'}</h3><p>${nothingYet ? 'Añade tu primer gel y empieza a organizar tu colección por marca, color y tipo.' : 'Prueba con otro código, color, marca o elimina algunos filtros.'}</p>${nothingYet ? '<button class="primary-button" type="button" data-action="add">+ Añadir </button>' : '<button class="secondary-button" type="button" data-action="reset">Limpiar filtros</button>'}</div>`;
     return;
   }
   const groupKey = $('#groupSelect').value;
@@ -166,8 +166,8 @@ function openEditor(item = null, duplicate = false) {
   $('#gelForm').reset();
   $('#formError').hidden = true;
   $('#editId').value = item && !duplicate ? item.id : '';
-  $('#dialogTitle').textContent = item && !duplicate ? 'Editar gel' : duplicate ? 'Duplicar gel' : 'Añadir gel';
-  $('#saveBtn').textContent = item && !duplicate ? 'Guardar cambios' : 'Guardar gel';
+  $('#dialogTitle').textContent = item && !duplicate ? 'Editar gel' : duplicate ? 'Duplicar gel' : 'Añadir producto';
+  $('#saveBtn').textContent = item && !duplicate ? 'Guardar cambios' : 'Guardar';
   $('#quantityInput').value = item ? String(item.quantity) : '1';
   $('#swatchInput').value = item ? validHex(item.swatch) : '#dca9b8';
   if (item) {
