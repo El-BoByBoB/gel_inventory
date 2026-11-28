@@ -126,7 +126,7 @@ function productCard(item) {
       <div class="product-bottom"><span class="product-price">${dollars(item.price)}</span><span class="stock-pill ${item.quantity===0?'out':''}">${item.quantity === 0 ? 'Sin stock' : `× ${item.quantity} unid.`}</span></div>
     </div>
     <button class="card-menu" type="button" data-action="menu" data-id="${escapeHtml(item.id)}" aria-label="Opciones de ${name}" aria-expanded="${activeMenu === item.id}">⋯</button>
-    ${activeMenu === item.id ? `<div class="menu-pop"><button type="button" data-action="edit" data-id="${escapeHtml(item.id)}">Editar gel</button><button type="button" data-action="duplicate" data-id="${escapeHtml(item.id)}">Duplicar</button><button type="button" class="danger" data-action="delete" data-id="${escapeHtml(item.id)}">Eliminar</button></div>` : ''}
+    ${activeMenu === item.id ? `<div class="menu-pop"><button type="button" data-action="edit" data-id="${escapeHtml(item.id)}">Editar producto</button><button type="button" data-action="duplicate" data-id="${escapeHtml(item.id)}">Duplicar</button><button type="button" class="danger" data-action="delete" data-id="${escapeHtml(item.id)}">Eliminar</button></div>` : ''}
   </article>`;
 }
 
@@ -166,7 +166,7 @@ function openEditor(item = null, duplicate = false) {
   $('#gelForm').reset();
   $('#formError').hidden = true;
   $('#editId').value = item && !duplicate ? item.id : '';
-  $('#dialogTitle').textContent = item && !duplicate ? 'Editar gel' : duplicate ? 'Duplicar gel' : 'Añadir producto';
+  $('#dialogTitle').textContent = item && !duplicate ? 'Editar producto' : duplicate ? 'Duplicar producto' : 'Añadir producto';
   $('#saveBtn').textContent = item && !duplicate ? 'Guardar cambios' : 'Guardar';
   $('#quantityInput').value = item ? String(item.quantity) : '1';
   $('#swatchInput').value = item ? validHex(item.swatch) : '#dca9b8';
@@ -216,7 +216,7 @@ async function handleSave(event) {
     error.hidden = false;
   } finally {
     button.disabled = false;
-    button.textContent = original ? 'Guardar cambios' : 'Guardar gel';
+    button.textContent = original ? 'Guardar cambios' : 'Guardar producto';
   }
 }
 

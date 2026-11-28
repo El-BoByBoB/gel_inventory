@@ -36,12 +36,12 @@ button:disabled{opacity:.55;cursor:not-allowed}
 .hero.hero-logo-banner::after { display: none; }
 .hero-logo-img {
   display: block;
-  width: min(310px, 94%);
+  width: 300px;
+  max-width: 90%;
   height: auto;
-  max-height: 310px;
   object-fit: contain;
-  mix-blend-mode: screen; /* Integra el fondo negro del JPG con el banner. */
-  border: 0;
+  image-rendering: auto;
+  border: none;
   box-shadow: none;
   border-radius: 0;
 }
