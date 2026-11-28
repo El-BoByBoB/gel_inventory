@@ -49,3 +49,93 @@ button:disabled{opacity:.55;cursor:not-allowed}
   .hero.hero-logo-banner { min-height: 260px; padding: 0; }
   .hero-logo-img { width: min(255px, 94%); max-height: 255px; }
 }
+
+/* COLORES GLOSSED BY YARILIS */
+:root {
+  --crema: #F7F1E6;
+  --crema-claro: #FFFBF4;
+  --dorado: #C9A45C;
+  --teal: #2E7477;
+  --teal-oscuro: #20575B;
+}
+
+/* Fondo y texto general */
+html, body {
+  background: var(--crema);
+  color: var(--teal-oscuro);
+}
+
+/* Banner del logo */
+.hero.hero-logo-banner {
+  background: var(--crema-claro);
+}
+
+/* Botones principales */
+.primary-button,
+.floating-add {
+  background: var(--teal);
+  color: white;
+}
+
+.primary-button:hover {
+  background: var(--teal-oscuro);
+}
+
+/* Encabezados y títulos */
+.brand-icon {
+  background: var(--teal);
+}
+
+.brand-title span,
+.auth-brand span,
+.eyebrow,
+.eyebrow.soft,
+.metric-number.money,
+.product-price {
+  color: var(--teal);
+}
+
+/* Tarjetas y formularios */
+.metric,
+.product-card,
+.empty-state,
+.auth-card,
+.menu-pop,
+dialog {
+  background: var(--crema-claro);
+  border-color: var(--dorado);
+}
+
+/* Campos de búsqueda y filtros */
+.search-wrap,
+.sort-wrap,
+.filters select,
+.field input,
+.auth-label input {
+  background: var(--crema-claro);
+  border-color: var(--dorado);
+}
+
+/* Detalles dorados */
+.count-pill,
+.group-count,
+.stock-pill {
+  background: #F0E3C7;
+  color: var(--teal-oscuro);
+}
+
+/* Enlaces y botones secundarios */
+.text-button,
+.product-brand,
+.footer span {
+  color: var(--teal);
+}
+
+/* Pantalla de inicio de sesión */
+.auth-screen {
+  background: var(--crema);
+}
+
+.auth-brand {
+  color: var(--teal-oscuro);
+}
