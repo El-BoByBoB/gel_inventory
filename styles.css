@@ -21,3 +21,31 @@
 #syncStatus{font-size:10px;color:#876e83;max-width:180px;text-align:right}
 button:disabled{opacity:.55;cursor:not-allowed}
 @media(max-width:570px){.auth-card{padding:28px 22px}.account-controls{flex-direction:column;gap:1px}#syncStatus{font-size:9px;max-width:115px}.account-controls .text-button{font-size:11px;padding:2px}.header-actions{gap:6px}}
+
+/* Banner Glossed by Yarilis: logo completo y centrado, sin marco interior. */
+.hero.hero-logo-banner {
+  background: #000;
+  min-height: 320px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.hero.hero-logo-banner::before,
+.hero.hero-logo-banner::after { display: none; }
+.hero-logo-img {
+  display: block;
+  width: min(310px, 94%);
+  height: auto;
+  max-height: 310px;
+  object-fit: contain;
+  mix-blend-mode: screen; /* Integra el fondo negro del JPG con el banner. */
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+@media (max-width: 570px) {
+  .hero.hero-logo-banner { min-height: 260px; padding: 0; }
+  .hero-logo-img { width: min(255px, 94%); max-height: 255px; }
+}

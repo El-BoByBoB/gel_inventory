@@ -41,18 +41,17 @@
         <button class="icon-button" id="backupBtn" type="button" aria-label="Respaldos y datos" title="Respaldos y datos">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>
         </button>
-        <button class="primary-button top-add" id="addBtn" type="button"><span class="plus">+</span> Añadir gel</button>
+        <button class="primary-button top-add" id="addBtn" type="button"><span class="plus">+</span> Añadir producto</button>
       </div>
     </header>
 
     <main>
-      <section class="hero" aria-labelledby="heroTitle">
-        <div class="hero-copy"><span class="eyebrow">INVENTARIO PERSONAL</span><h1 id="heroTitle">Todos tus geles,<br><em>en un solo lugar.</em></h1><p>Encuentra cada tono, marca y acabado sin tener que revisar botella por botella.</p></div>
-        <div class="hero-decoration" aria-hidden="true"><div class="bottle bottle-back"><div class="cap"></div><div class="glass"></div></div><div class="bottle bottle-front"><div class="cap"></div><div class="glass"><span>GEL</span></div></div><div class="hero-spark">✧</div></div>
+      <section class="hero hero-logo-banner" aria-label="Logo de Glossed by Yarilis">
+        <img class="hero-logo-img" src="icons/logo-glossed.jpg" alt="Glossed by Yarilis">
       </section>
 
-      <section class="metrics" aria-label="Resumen del inventario">
-        <div class="metric"><div class="metric-label">Geles diferentes</div><div class="metric-number" id="totalProducts">0</div><span class="metric-note">registros</span></div>
+      <section class="metrics" aria-label="Resumen del inventario" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+        <div class="metric" hidden><div class="metric-label">Geles diferentes</div><div class="metric-number" id="totalProducts">0</div><span class="metric-note">registros</span></div>
         <div class="metric"><div class="metric-label">Unidades totales</div><div class="metric-number" id="totalUnits">0</div><span class="metric-note">botellas y envases</span></div>
         <div class="metric"><div class="metric-label">Valor del inventario</div><div class="metric-number money" id="totalValue">$0.00</div><span class="metric-note">según precios ingresados</span></div>
       </section>
@@ -64,10 +63,10 @@
           <label class="sort-wrap"><span>Orden</span><select id="sortSelect"><option value="name">A–Z</option><option value="recent">Más recientes</option><option value="priceHigh">Precio mayor</option><option value="priceLow">Precio menor</option><option value="quantity">Más unidades</option></select></label>
         </div>
         <div class="filters">
-          <label><span>Tipo de gel</span><select id="typeFilter"><option value="">Todos los tipos</option></select></label>
+          <label><span>Tipo de producto</span><select id="typeFilter"><option value="">Todos los tipos</option></select></label>
           <label><span>Marca</span><select id="brandFilter"><option value="">Todas las marcas</option></select></label>
           <label><span>Color</span><select id="colorFilter"><option value="">Todos los colores</option></select></label>
-          <label><span>Ver por categoría</span><select id="groupSelect"><option value="type">Tipo de gel</option><option value="brand">Marca</option><option value="color">Color</option><option value="none">Sin agrupar</option></select></label>
+          <label><span>Ver por categoría</span><select id="groupSelect"><option value="type">Tipo de producto</option><option value="brand">Marca</option><option value="color">Color</option><option value="none">Sin agrupar</option></select></label>
         </div>
         <div id="results" class="results" aria-live="polite"></div>
       </section>
@@ -75,17 +74,17 @@
     <footer class="footer">GEL STUDIO <span>✦</span> Inventario compartido en la nube. Exporta respaldos de vez en cuando.</footer>
   </div>
 
-  <button class="floating-add" id="floatingAddBtn" type="button" aria-label="Añadir un gel">+</button>
+  <button class="floating-add" id="floatingAddBtn" type="button" aria-label="Añadir un producto">+</button>
 
   <dialog class="editor-modal" id="gelDialog" aria-labelledby="dialogTitle">
     <form id="gelForm" class="dialog-content">
-      <div class="dialog-header"><div><span class="eyebrow soft">TU INVENTARIO</span><h2 id="dialogTitle">Añadir gel</h2></div><button class="close-button" type="button" data-close="gelDialog" aria-label="Cerrar">×</button></div>
+      <div class="dialog-header"><div><span class="eyebrow soft">TU INVENTARIO</span><h2 id="dialogTitle">Añadir producto</h2></div><button class="close-button" type="button" data-close="gelDialog" aria-label="Cerrar">×</button></div>
       <input type="hidden" id="editId">
       <div class="form-grid">
         <label class="field"><span>Marca <b>*</b></span><input id="brandInput" name="brand" required maxlength="65" placeholder="Ej. DND" list="brandSuggestions" autocomplete="off"><datalist id="brandSuggestions"></datalist></label>
-        <label class="field"><span>Código del gel <b>*</b></span><input id="codeInput" name="code" required maxlength="65" placeholder="Ej. 045" autocomplete="off"></label>
+        <label class="field"><span>Código <b>*</b></span><input id="codeInput" name="code" required maxlength="65" placeholder="Ej. 045" autocomplete="off"></label>
         <label class="field"><span>Nombre del color <b>*</b></span><input id="colorInput" name="color" required maxlength="75" placeholder="Ej. Rosa pastel" autocomplete="off"></label>
-        <label class="field"><span>Tipo de gel <b>*</b></span><input id="typeInput" name="type" required maxlength="65" list="typeSuggestions" placeholder="Ej. Gel polish" autocomplete="off"><datalist id="typeSuggestions"><option value="Gel polish"></option><option value="Builder gel"></option><option value="Base coat"></option><option value="Top coat"></option><option value="Rubber base"></option><option value="Cat eye"></option><option value="Jelly gel"></option><option value="Glitter gel"></option><option value="Polygel"></option><option value="Painting gel"></option><option value="Blooming gel"></option><option value="Otro"></option></datalist></label>
+        <label class="field"><span>Tipo de producto <b>*</b></span><input id="typeInput" name="type" required maxlength="65" list="typeSuggestions" placeholder="Ej. Gel polish" autocomplete="off"><datalist id="typeSuggestions"><option value="Gel polish"></option><option value="Builder gel"></option><option value="Base coat"></option><option value="Top coat"></option><option value="Rubber base"></option><option value="Cat eye"></option><option value="Jelly gel"></option><option value="Glitter gel"></option><option value="Polygel"></option><option value="Painting gel"></option><option value="Blooming gel"></option><option value="Otro"></option></datalist></label>
         <label class="field"><span>Precio por unidad ($) <b>*</b></span><input id="priceInput" name="price" type="number" inputmode="decimal" min="0" max="999999" step="0.01" required placeholder="0.00"></label>
         <label class="field"><span>Cantidad</span><input id="quantityInput" name="quantity" type="number" inputmode="numeric" min="0" max="999999" step="1" required value="1"></label>
         <label class="field swatch-field"><span>Muestra del color</span><div class="swatch-input"><input id="swatchInput" name="swatch" type="color" value="#dca9b8"><span>Elegir tono aproximado</span></div></label>
